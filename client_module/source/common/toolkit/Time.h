@@ -26,7 +26,7 @@ static inline unsigned Time_elapsedMS(Time* this);
  */
 struct Time
 {
-   struct timespec now;
+   struct timespec64 now;
 };
 
 
@@ -35,7 +35,7 @@ struct Time
  */
 void Time_init(Time* this)
 {
-   ktime_get_ts(&this->now);
+   ktime_get_ts64(&this->now);
 }
 
 /**
@@ -48,7 +48,7 @@ void Time_initZero(Time* this)
 
 void Time_setToNow(Time* this)
 {
-   ktime_get_ts(&this->now);
+   ktime_get_ts64(&this->now);
 }
 
 

@@ -117,7 +117,7 @@ void OsTypeConv_iattrOsToFhgfs(struct iattr* iAttr, SettableFileAttribs* fhgfsAt
       TimeAbs_init(&now);
 
       (*outValidAttribs) |= SETATTR_CHANGE_MODIFICATIONTIME;
-      fhgfsAttr->modificationTimeSecs = TimeAbs_getTimeval(&now)->tv_sec;
+      fhgfsAttr->modificationTimeSecs = TimeAbs_getSec(&now);
    }
 
    if(iAttr->ia_valid & ATTR_ATIME_SET)
@@ -132,7 +132,7 @@ void OsTypeConv_iattrOsToFhgfs(struct iattr* iAttr, SettableFileAttribs* fhgfsAt
       TimeAbs_init(&now);
 
       (*outValidAttribs) |= SETATTR_CHANGE_LASTACCESSTIME;
-      fhgfsAttr->lastAccessTimeSecs = TimeAbs_getTimeval(&now)->tv_sec;
+      fhgfsAttr->lastAccessTimeSecs = TimeAbs_getSec(&now);
    }
 }
 

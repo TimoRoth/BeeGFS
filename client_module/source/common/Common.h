@@ -7,11 +7,13 @@
 #include <linux/sched.h> /* for TASK_COMM_LEN */
 #include <linux/string.h>
 #include <linux/time.h>
+#include <linux/ktime.h>
 #include <linux/types.h>
 #include <linux/version.h>
 #include <linux/vmalloc.h>
 #include <linux/errno.h>
 #include <linux/slab.h>
+#include <linux/uaccess.h>
 #include <asm/uaccess.h>
 #include <stdarg.h>
 #include <linux/types.h>
@@ -140,10 +142,15 @@
 #endif
 
 /* wrappers for get_fs()/set_fs() */
+#ifdef CONFIG_SET_FS
 #define ACQUIRE_PROCESS_CONTEXT(fs_varname) \
    do { fs_varname = get_fs(); set_fs(KERNEL_DS); } while(0)
 #define RELEASE_PROCESS_CONTEXT(fs_varname) \
    set_fs(fs_varname)
+#else
+#define ACQUIRE_PROCESS_CONTEXT(fs_varname) do{ (void)fs_varname; } while(0)
+#define RELEASE_PROCESS_CONTEXT(fs_varname) do{ (void)fs_varname; } while(0)
+#endif
 
 
 // in 4.13 wait_queue_t got renamed to wait_queue_entry_t
@@ -160,7 +167,16 @@ static inline struct timespec64 current_fs_time(struct super_block *sb)
 #else
    struct timespec64 now = current_kernel_time64();
 #endif /* KERNEL_HAS_KTIME_GET */
-   return timespec64_trunc(now, sb->s_time_gran);
+   if (sb->s_time_gran == 1) {
+      /* nothing */
+   } else if (sb->s_time_gran == NSEC_PER_SEC) {
+      now.tv_nsec = 0;
+   } else if (sb->s_time_gran > 1 && sb->s_time_gran < NSEC_PER_SEC) {
+      now.tv_nsec -= now.tv_nsec % sb->s_time_gran;
+   } else {
+      WARN(1, "illegal file time granularity: %u", sb->s_time_gran);
+   }
+   return now;
 }
 #elif !defined(KERNEL_HAS_CURRENT_FS_TIME)
 static inline struct timespec current_fs_time(struct super_block *sb)

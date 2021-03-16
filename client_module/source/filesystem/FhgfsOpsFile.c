@@ -1148,10 +1148,12 @@ static ssize_t FhgfsOps_buffered_read_iter(struct kiocb *iocb, struct iov_iter *
       struct iovec iov;
       struct iov_iter iter = *to;
 
+#ifdef CONFIG_SET_FS
       mm_segment_t segment = get_fs();
 
       if (to->type & ITER_KVEC)
          set_fs(KERNEL_DS);
+#endif
 
       if (iter.count > (2<<30))
          iter.count = 2<<30;
@@ -1175,8 +1177,10 @@ static ssize_t FhgfsOps_buffered_read_iter(struct kiocb *iocb, struct iov_iter *
             break;
       }
 
+#ifdef CONFIG_SET_FS
       if (to->type & ITER_KVEC)
          set_fs(segment);
+#endif
    }
 #ifdef KERNEL_HAS_ITER_PIPE
    else if ((iov_iter_type(to) == ITER_BVEC) ||
@@ -1537,10 +1541,12 @@ static ssize_t FhgfsOps_buffered_write_iter(struct kiocb *iocb, struct iov_iter 
       struct iovec iov;
       struct iov_iter iter = *from;
 
+#ifdef CONFIG_SET_FS
       mm_segment_t segment = get_fs();
 
       if (from->type & ITER_KVEC)
          set_fs(KERNEL_DS);
+#endif
 
       if (iter.count > (2<<30))
          iter.count = 2<<30;
@@ -1564,8 +1570,10 @@ static ssize_t FhgfsOps_buffered_write_iter(struct kiocb *iocb, struct iov_iter 
             break;
       }
 
+#ifdef CONFIG_SET_FS
       if (from->type & ITER_KVEC)
          set_fs(segment);
+#endif
    }
 #ifdef KERNEL_HAS_ITER_PIPE
    else if ((iov_iter_type(from) == ITER_BVEC) ||

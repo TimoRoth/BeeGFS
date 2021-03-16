@@ -832,7 +832,7 @@ void FhgfsOps_newAttrToInode(struct iattr* iAttr, struct inode* outInode)
       TimeAbs now;
       TimeAbs_init(&now);
 
-      outInode->i_mtime.tv_sec = TimeAbs_getTimeval(&now)->tv_sec;
+      outInode->i_mtime.tv_sec = TimeAbs_getSec(&now);
    }
 
    if(iAttr->ia_valid & ATTR_ATIME_SET)
@@ -845,7 +845,7 @@ void FhgfsOps_newAttrToInode(struct iattr* iAttr, struct inode* outInode)
       TimeAbs now;
       TimeAbs_init(&now);
 
-      outInode->i_atime.tv_sec = TimeAbs_getTimeval(&now)->tv_sec;
+      outInode->i_atime.tv_sec = TimeAbs_getSec(&now);
    }
 
    if(iAttr->ia_valid & ATTR_CTIME)
@@ -853,7 +853,7 @@ void FhgfsOps_newAttrToInode(struct iattr* iAttr, struct inode* outInode)
       TimeAbs now;
       TimeAbs_init(&now);
 
-      outInode->i_ctime.tv_sec = TimeAbs_getTimeval(&now)->tv_sec;
+      outInode->i_ctime.tv_sec = TimeAbs_getSec(&now);
    }
 
    spin_unlock(&outInode->i_lock);
@@ -2499,7 +2499,7 @@ int __FhgfsOps_doRefreshInode(App* app, struct inode* inode, fhgfs_stat* fhgfsSt
    FhgfsOpsErr statRes;
    FhgfsInode* fhgfsInode = BEEGFS_INODE(inode);
 
-   time_t oldMTime;
+   ktime_t oldMTime;
    loff_t oldSize;
    unsigned cacheElapsedMS;
    bool mtimeSizeInvalidate;

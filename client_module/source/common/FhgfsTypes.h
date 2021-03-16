@@ -21,9 +21,9 @@ struct fhgfs_stat
    gid_t gid;
    loff_t size;
    uint64_t blocks;
-   struct timespec atime;
-   struct timespec mtime;
-   struct timespec ctime; // attrib change time (not creation time)
+   struct timespec64 atime;
+   struct timespec64 mtime;
+   struct timespec64 ctime; // attrib change time (not creation time)
 };
 typedef struct fhgfs_stat fhgfs_stat;
 

@@ -522,7 +522,7 @@ bool __App_initLocalNodeInfo(App* this)
    currentPID = current->pid;
 
    nodeID = StringTk_kasprintf("%llX-%llX-%s",
-      (uint64_t)currentPID, (uint64_t)TimeAbs_getTimeval(&nowT)->tv_sec, hostname);
+      (uint64_t)currentPID, (uint64_t)TimeAbs_getSec(&nowT), hostname);
 
    // note: numeric ID gets initialized with 0; will be set by management later in InternodeSyncer
    this->localNode = Node_construct(this, nodeID, (NumNodeID){0},

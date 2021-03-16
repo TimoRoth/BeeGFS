@@ -244,7 +244,7 @@ void __StandardSocket_setAllocMode(StandardSocket* this, gfp_t flags)
  * @return 0 on success, error code otherwise (=> different from userspace version)
  */
 int _StandardSocket_setsockopt(StandardSocket* this, int level,
-   int optname, char* optval, int optlen)
+   int optname, sockptr_t optval, int optlen)
 {
    int retVal = -EINVAL;
    mm_segment_t oldfs;
@@ -321,7 +321,7 @@ bool StandardSocket_setSoKeepAlive(StandardSocket* this, bool enable)
    int setRes = _StandardSocket_setsockopt(this,
       SOL_SOCKET,
       SO_KEEPALIVE,
-      (char*)&keepAliveVal,
+      KERNEL_SOCKPTR(&keepAliveVal),
       sizeof(keepAliveVal) );
 
    if(setRes != 0)
@@ -337,7 +337,7 @@ bool StandardSocket_setSoBroadcast(StandardSocket* this, bool enable)
    int setRes = _StandardSocket_setsockopt(this,
       SOL_SOCKET,
       SO_BROADCAST,
-      (char*)&broadcastVal,
+      KERNEL_SOCKPTR(&broadcastVal),
       sizeof(broadcastVal) );
 
    if(setRes != 0)
@@ -393,7 +393,7 @@ bool StandardSocket_setSoRcvBuf(StandardSocket* this, int size)
    setRes = _StandardSocket_setsockopt(this,
       SOL_SOCKET,
       SO_RCVBUF,
-      (char*)&halfSize,
+      KERNEL_SOCKPTR(&halfSize),
       sizeof(halfSize) );
 
    if(setRes)
@@ -412,7 +412,7 @@ bool StandardSocket_setTcpNoDelay(StandardSocket* this, bool enable)
    int noDelayRes = _StandardSocket_setsockopt(this,
       IPPROTO_TCP,
       TCP_NODELAY,
-      (char*)&noDelayVal,
+      KERNEL_SOCKPTR(&noDelayVal),
       sizeof(noDelayVal) );
 
    if(noDelayRes != 0)
@@ -428,7 +428,7 @@ bool StandardSocket_setTcpCork(StandardSocket* this, bool enable)
    int setRes = _StandardSocket_setsockopt(this,
       SOL_TCP,
       TCP_CORK,
-      (char*)&corkVal,
+      KERNEL_SOCKPTR(&corkVal),
       sizeof(corkVal) );
 
    if(setRes != 0)

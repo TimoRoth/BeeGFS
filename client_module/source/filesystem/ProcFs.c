@@ -26,16 +26,16 @@
  * Initializer for read-only proc file ops
  */
 #define BEEGFS_PROC_FOPS_INITIALIZER  \
-   .open    = __ProcFs_open,         \
-   .read    = seq_read,              \
-   .llseek  = seq_lseek,             \
-   .release = single_release
+   .proc_open    = __ProcFs_open,     \
+   .proc_read    = seq_read,          \
+   .proc_lseek   = seq_lseek,         \
+   .proc_release = single_release
 
 
 /**
  * generic file ops for procfs entries
  */
-static const struct file_operations fhgfs_proc_fops =
+static const struct proc_ops fhgfs_proc_fops =
 {
    BEEGFS_PROC_FOPS_INITIALIZER
 };
@@ -73,7 +73,7 @@ struct fhgfs_proc_file_rw
    char name[32]; // filename
    int (*show)(struct seq_file *, void *); // the show method of this file
    //ssize_t (*write)(struct file *, const char __user *, size_t, loff_t *); // the write method
-   struct file_operations proc_fops;
+   struct proc_ops proc_fops;
 };
 
 /**
@@ -87,30 +87,30 @@ static const struct fhgfs_proc_file_rw fhgfs_proc_files_rw[] =
    { BEEGFS_PROC_ENTRY_RETRIESENABLED, &__ProcFs_readV2_connRetriesEnabled,
       {
          BEEGFS_PROC_FOPS_INITIALIZER,
-         .write   = &__ProcFs_writeV2_connRetriesEnabled,
+         .proc_write = &__ProcFs_writeV2_connRetriesEnabled,
       },
    },
    { BEEGFS_PROC_ENTRY_NETBENCHENABLED, &__ProcFs_readV2_netBenchModeEnabled,
       {
          BEEGFS_PROC_FOPS_INITIALIZER,
-         .write   = &__ProcFs_writeV2_netBenchModeEnabled,
+         .proc_write = &__ProcFs_writeV2_netBenchModeEnabled,
       },
    },
    { BEEGFS_PROC_ENTRY_DROPCONNS, &__ProcFs_readV2_nothing,
       {
          BEEGFS_PROC_FOPS_INITIALIZER,
-         .write   = &__ProcFs_writeV2_dropConns,
+         .proc_write = &__ProcFs_writeV2_dropConns,
       },
    },
    { BEEGFS_PROC_ENTRY_LOGLEVELS, &__ProcFs_readV2_logLevels,
       {
          BEEGFS_PROC_FOPS_INITIALIZER,
-         .write   = &__ProcFs_writeV2_logLevels,
+         .proc_write = &__ProcFs_writeV2_logLevels,
       },
    },
    { "", NULL,
       {
-        .open = NULL,
+        .proc_open = NULL,
       },
    } // last element must be empty (for loop termination)
 };
